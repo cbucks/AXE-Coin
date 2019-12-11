@@ -30,6 +30,7 @@ contract Token is IERC20Token, Whitelist, Pausable {
   string _symbol;
   uint256 _totalSupply;
   uint256 _decimals;
+  uint256 _burnRate;
   uint256 _totalBurned;
 
   constructor () public {
@@ -37,17 +38,15 @@ contract Token is IERC20Token, Whitelist, Pausable {
     _symbol = "a2";
     _totalSupply = 100000000000;
     _decimals = 2;
+    _burnRate = 100;
     _totalBurned = 0;
   }
 
   mapping(address => uint256) private balances;
   mapping(address => mapping(address => uint256)) private allowed;
   
-  mapping(address => bool) private allowedBurners;
-  mapping(address => uint256) private withdrawals;
-
   event Burned(address indexed owner, uint256 amount, uint256 timestamp);
-  event AuthorizedBurner(address indexed appointer, address indexed burner, uint256 timestamp);
+  event BurnRateChanged(address indexed owner, uint256 amount, uint256 timestamp);
 
   function name() external view returns (string memory) {
     return _name;
@@ -76,17 +75,18 @@ contract Token is IERC20Token, Whitelist, Pausable {
   function transfer(
     address _recipient,
     uint256 _amount
-    ) external whenNotPaused onlyWhitelisted(msg.sender, _recipient)
+    ) external whenNotPaused onlyWhitelisted(msg.sender, _recipient) validRecipient(_recipient)
     validAddress(_recipient) sufficientBalance(msg.sender, _amount) returns (bool) {
       balances[msg.sender] = balances[msg.sender].sub(_amount);
       balances[_recipient] = balances[_recipient].add(_amount);
+      burn();
       emit Transfer(msg.sender, _recipient, _amount);
   }
 
   function approve(
     address _spender,
     uint256 _amount
-    ) external whenNotPaused validAddress(_spender)
+    ) external whenNotPaused validAddress(_spender) validRecipient(_spender)
     sufficientBalance(msg.sender, _amount) returns (bool) {
     allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_amount);
     emit Approval(msg.sender, _spender, _amount);
@@ -96,11 +96,12 @@ contract Token is IERC20Token, Whitelist, Pausable {
     address _sender,
     address _recipient,
     uint256 _amount
-    ) external whenNotPaused validAddress(_recipient)
+    ) external whenNotPaused validAddress(_recipient) validRecipient(_recipient)
     sufficientBalance(msg.sender, _amount) returns (bool) {
       require(allowed[_sender][msg.sender] >= _amount, "Above spender allowance.");
       allowed[_sender][msg.sender] = allowed[_sender][msg.sender].sub(_amount);
       balances[_recipient] = balances[_recipient].add(_amount);
+      burn();
       emit Transfer(_sender, _recipient, _amount);
     }
 
@@ -110,38 +111,35 @@ contract Token is IERC20Token, Whitelist, Pausable {
   }
 
   modifier sufficientBalance(address _sender, uint256 _amount) {
-    require(balances[_sender] >= _amount, "Insufficient Funds.");
+    require(balances[_sender] >= _amount.add(_burnRate), "Insufficient Funds.");
+    _;
+  }
+
+  modifier validRecipient(address _address) {
+    require(msg.sender != _address, "Cannot send to yourself");
     _;
   }
 
   // BURN FUNCTIONALITIES
 
+  function burnRate() external view returns (uint256) {
+    return _burnRate;
+  }
+
   function totalBurned() external view returns (uint256) {
     return _totalBurned;
   }
 
-  function withdrawalOf(address _account) external view returns (uint256) {
-    return withdrawals[_account];
+  function burn() internal whenNotPaused returns (bool) {
+      balances[msg.sender] = balances[msg.sender].sub(_burnRate);
+      _totalSupply = _totalSupply.sub(_burnRate);
+      _totalBurned = _totalBurned.add(_burnRate);
+      emit Burned(msg.sender, _burnRate, now);
   }
 
-  function authorizeBurner(
-    address _burner) external onlyOwner whenNotPaused returns (bool) {
-      require(allowedBurners[_burner] == false);
-      allowedBurners[_burner] = true;
-      emit AuthorizedBurner(msg.sender, _burner, now);
+  function changeBurnRate(
+    uint256 _amount) external onlyOwner returns (bool) {
+      _burnRate = _amount;
+      emit BurnRateChanged(msg.sender, _amount, now);
     }
-
-  function burn(
-    uint256 _amount) external whenNotPaused isBurner(msg.sender)
-    sufficientBalance(msg.sender, _amount) returns (bool) {
-      balances[msg.sender] = balances[msg.sender].sub(_amount);
-      withdrawals[msg.sender] = withdrawals[msg.sender].add(_amount);
-      _totalSupply = _totalSupply.sub(_amount);
-      emit Burned(msg.sender, _amount, now);
-  }
-
-  modifier isBurner(address _address) {
-    require(allowedBurners[_address] == true);
-    _;
-  }
 }
