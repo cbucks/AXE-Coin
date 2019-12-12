@@ -18,7 +18,7 @@ const {
     ensureException,
 } = require('./helpers/Utils');
 
-contract('TokenContract', (accounts) => {
+contract('Token', (accounts) => {
     it('should deploy smart contract to ethereum network', async () => {
         const tokenContract = await TokenContract.deployed();
         assert(tokenContract.address !== '');

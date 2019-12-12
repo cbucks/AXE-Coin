@@ -29,6 +29,18 @@ contract Airdrop is Pausable, Whitelist {
         _totalAirdrops = 0;
     }
 
+    function token() external view returns (address) {
+        return _token;
+    }
+
+    function amount() external view returns (uint256) {
+        return _amount;
+    }
+
+    function totalAirdrops() external view returns (uint256) {
+        return _totalAirdrops;
+    }
+
     function remainingTokens() external view returns (uint256) {
         return Token(_token).balanceOf(address(this));
     }
