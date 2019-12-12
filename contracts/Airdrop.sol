@@ -18,10 +18,10 @@ contract Airdrop is Pausable, Whitelist {
 
     mapping(address => uint256) private airdrops;
 
-    event GivenAirdrop(address indexed recipient, uint256 amount, uint256 timestamp);
-    event AmountChanged(address indexed owner, uint256 amount, uint256 timestamp);
-    event TokenChanged(address indexed owner, address indexed newAddress, uint256 timestamp);
-    event OwnerWithdrawn(address indexed owner, uint256 amount, uint256 timestamp);
+    event GivenAirdrop(address indexed to, uint256 value, uint256 timestamp);
+    event AmountChanged(address indexed from, uint256 value, uint256 timestamp);
+    event TokenChanged(address indexed from, address indexed newAddress, uint256 timestamp);
+    event OwnerWithdrawn(address indexed from, uint256 value, uint256 timestamp);
 
     constructor() public {
         _token = 0x04D37d12f89813c2683e526d2DC2c54c6dbbDDe7;

@@ -64,4 +64,21 @@ contract('TokenContract', (accounts) => {
         balance = await tokenContract.balanceOf.call(accounts[1]);
         assert.equal(balance, TRANSFER_AMOUNT);
     });
+
+    it('verifies that transfer transaction triggers a Transfer event', async () => {
+        const tokenContract = await TokenContract.deployed();
+        const tx = await tokenContract.transfer(accounts[1], TRANSFER_AMOUNT);
+        assert(tx.logs.length > 0 && tx.logs[1].event == 'Transfer');
+        assert.equal(tx.logs[1].args.from, accounts[0]);
+        assert.equal(tx.logs[1].args.to, accounts[1]);
+        assert.equal(tx.logs[1].args.value, TRANSFER_AMOUNT);
+    });
+
+    it('verifies that transfer transaction triggers a Burn event', async () => {
+        const tokenContract = await TokenContract.deployed();
+        const tx = await tokenContract.transfer(accounts[1], TRANSFER_AMOUNT);
+        assert(tx.logs.length > 0 && tx.logs[0].event == 'Burned');
+        assert.equal(tx.logs[1].args.from, accounts[0]);
+        assert.equal(tx.logs[1].args.value, TRANSFER_AMOUNT);
+    });
 });

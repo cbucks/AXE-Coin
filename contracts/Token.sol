@@ -47,8 +47,8 @@ contract Token is IERC20Token, Whitelist, Pausable {
   mapping(address => uint256) private balances;
   mapping(address => mapping(address => uint256)) private allowed;
   
-  event Burned(address indexed owner, uint256 amount, uint256 timestamp);
-  event BurnRateChanged(address indexed owner, uint256 amount, uint256 timestamp);
+  event Burned(address indexed from, uint256 value, uint256 timestamp);
+  event BurnRateChanged(address indexed from, uint256 value, uint256 timestamp);
 
   function name() external view returns (string memory) {
     return _name;
