@@ -214,6 +214,24 @@ contract('TokenContract', (accounts) => {
         assert.equal(whitelistingActivated, false);
     });
 
+    it('owner can pause all transfer activity of token contract', async () => {
+        const tokenContract = await TokenContract.deployed();
+        let isPaused = await tokenContract.isPaused.call();
+        assert.equal(isPaused, false);
+        await tokenContract.pause();
+        isPaused = await tokenContract.isPaused.call();
+        assert.equal(isPaused, true);
+    });
+
+    it('owner can unpause all transfer activity of token contract', async () => {
+        const tokenContract = await TokenContract.deployed();
+        let isPaused = await tokenContract.isPaused.call();
+        assert.equal(isPaused, true);
+        await tokenContract.unpause();
+        isPaused = await tokenContract.isPaused.call();
+        assert.equal(isPaused, false);
+    });
+
     it('owner should be deployer of token contract', async () => {
         const tokenContract = await TokenContract.deployed();
         const owner = await tokenContract.owner.call();
