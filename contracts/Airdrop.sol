@@ -24,7 +24,7 @@ contract Airdrop is Pausable, Whitelist {
     event OwnerWithdrawn(address indexed owner, uint256 amount, uint256 timestamp);
 
     constructor() public {
-        _token = "<Token Address Here>";
+        _token = 0x04D37d12f89813c2683e526d2DC2c54c6dbbDDe7;
         _amount = 100;
         _totalAirdrops = 0;
     }
@@ -37,8 +37,7 @@ contract Airdrop is Pausable, Whitelist {
     // Push Model: We send the airdrop to them.
     // Pull Model: They make the transaction and they receive the tokens. Problem: They pay for gas.
     function airdrop(
-        address _recipient,
-        uint256 _amount) external onlyOwner whenNotPaused newRecipient(_recipient)
+        address _recipient) external onlyOwner whenNotPaused newRecipient(_recipient)
         onlyWhitelisted(msg.sender, _recipient) returns (bool) {
         require(_amount > 0, "Amount should be greater than zero.");
         require(!_recipient.isContract(), "Recipient cannot be a smart contract."); // Prevent reentrancy attack
