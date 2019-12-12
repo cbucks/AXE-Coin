@@ -118,7 +118,7 @@ contract Token is IERC20Token, Whitelist, Pausable {
   }
 
   modifier validRecipient(address _address) {
-    require(msg.sender != _address, "Cannot send to yourself");
+    require(msg.sender != _address, "Cannot send to yourself.");
     _;
   }
 

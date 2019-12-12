@@ -3,12 +3,16 @@ const {
     TOKEN_NAME,
     TOKEN_SYMBOL,
     TOTAL_SUPPLY,
-    TOTAL_SUPPLY_MINUS_DECIMAL,
     DECIMALS,
     BURN_RATE,
     TOTAL_BURNED,
     TRANSFER_AMOUNT,
+    INVALID_TRANSFER_AMOUNT,
+    INVALID_TRANSFER_RECIPIENT,
 } = require('../constants');
+const {
+    ensureException,
+} = require('./helpers/Utils');
 
 contract('TokenContract', (accounts) => {
     it('should deploy smart contract to ethereum network', async () => {
@@ -74,11 +78,40 @@ contract('TokenContract', (accounts) => {
         assert.equal(tx.logs[1].args.value, TRANSFER_AMOUNT);
     });
 
-    it('verifies that transfer transaction triggers a Burn event', async () => {
+    it('verifies that transfer transaction triggers a Burned event', async () => {
         const tokenContract = await TokenContract.deployed();
         const tx = await tokenContract.transfer(accounts[1], TRANSFER_AMOUNT);
         assert(tx.logs.length > 0 && tx.logs[0].event == 'Burned');
         assert.equal(tx.logs[1].args.from, accounts[0]);
         assert.equal(tx.logs[1].args.value, TRANSFER_AMOUNT);
+    });
+
+    it('throws when attempting a transfer more than the balance', async () => {
+        const tokenContract = await TokenContract.deployed();
+        try {
+            await tokenContract.transfer(accounts[1], INVALID_TRANSFER_AMOUNT);
+            assert.fail();
+        } catch (ContractError) {
+            return ensureException(ContractError, 'Insufficient Funds.');
+        }
+    });
+
+    it('throws when attempting a transfer to an invalid address', async () => {
+        const tokenContract = await TokenContract.deployed();
+        try {
+            await tokenContract.transfer(INVALID_TRANSFER_RECIPIENT, TRANSFER_AMOUNT);
+            assert.fail();
+        } catch (ContractError) {
+            return ensureException(ContractError, 'Cannot send to address 0x0.');
+        }
+    });
+
+    it('throws when attempting a transfer to yourself', async () => {
+        const tokenContract = await TokenContract.deployed();
+        try {
+            await tokenContract.transfer(accounts[0], TRANSFER_AMOUNT);
+        } catch (ContractError) {
+            return ensureException(ContractError, 'Cannot send to yourself.');
+        }
     });
 });
