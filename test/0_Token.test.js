@@ -22,6 +22,7 @@ contract('Token', (accounts) => {
     it('should deploy smart contract to ethereum network', async () => {
         const tokenContract = await TokenContract.deployed();
         assert(tokenContract.address !== '');
+        process.env.TOKEN_ADDRESS = tokenContract.address;
     });
 
     it(`should have token name of ${TOKEN_NAME}`, async () => {
