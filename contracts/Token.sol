@@ -66,51 +66,56 @@ contract Token is IERC20Token, Whitelist, Pausable {
     return _decimals;
   }
 
-  function balanceOf(address _account) external view returns (uint256) {
-    return balances[_account];
+  function balanceOf(address account) external view returns (uint256) {
+    return balances[account];
   }
 
-  function allowance(address _owner, address _spender) external view returns (uint256) {
-    return allowed[_owner][_spender];
+  function allowance(address owner, address spender) external view returns (uint256) {
+    return allowed[owner][spender];
   }
 
   function transfer(
-    address _recipient,
-    uint256 _amount
-    ) external whenNotPaused onlyWhitelisted(msg.sender, _recipient) validRecipient(_recipient)
-    validAddress(_recipient) sufficientBalance(msg.sender, _amount) returns (bool) {
-      balances[msg.sender] = balances[msg.sender].sub(_amount);
-      balances[_recipient] = balances[_recipient].add(_amount);
+    address recipient,
+    uint256 amount
+    ) external whenNotPaused onlyWhitelisted(msg.sender, recipient) validRecipient(recipient)
+    validAmount(amount) validAddress(recipient) sufficientBalance(msg.sender, amount) returns (bool) {
+      balances[msg.sender] = balances[msg.sender].sub(amount);
+      balances[recipient] = balances[recipient].add(amount);
       burn();
-      emit Transfer(msg.sender, _recipient, _amount);
+      emit Transfer(msg.sender, recipient, amount);
   }
 
   function approve(
-    address _spender,
-    uint256 _amount
-    ) external whenNotPaused validAddress(_spender) validRecipient(_spender)
-    sufficientBalance(msg.sender, _amount) returns (bool) {
-    allowed[msg.sender][_spender] = allowed[msg.sender][_spender].add(_amount);
-    emit Approval(msg.sender, _spender, _amount);
+    address spender,
+    uint256 amount
+    ) external whenNotPaused validAddress(spender) validRecipient(spender)
+    validAmount(amount) sufficientBalance(msg.sender, amount) returns (bool) {
+    allowed[msg.sender][spender] = allowed[msg.sender][spender].add(amount);
+    emit Approval(msg.sender, spender, amount);
   }
 
   function transferFrom(
-    address _sender,
-    address _recipient,
-    uint256 _amount
-    ) external whenNotPaused validAddress(_recipient) validRecipient(_recipient)
-    sufficientBalance(msg.sender, _amount) returns (bool) {
-      require(allowed[_sender][msg.sender] >= _amount, "Above spender allowance.");
-      allowed[_sender][msg.sender] = allowed[_sender][msg.sender].sub(_amount);
-      balances[_recipient] = balances[_recipient].add(_amount);
+    address sender,
+    address recipient,
+    uint256 amount
+    ) external whenNotPaused validAddress(recipient) validRecipient(recipient)
+    validAmount(amount) sufficientBalance(msg.sender, amount) returns (bool) {
+      require(allowed[sender][msg.sender] >= amount, "Above spender allowance.");
+      allowed[sender][msg.sender] = allowed[sender][msg.sender].sub(amount);
+      balances[recipient] = balances[recipient].add(amount);
       burn();
-      emit Transfer(_sender, _recipient, _amount);
+      emit Transfer(sender, recipient, amount);
     }
 
   modifier validAddress(address _address) {
     require(_address != address(0), "Cannot send to address 0x0.");
     _;
   }
+
+  modifier validAmount(uint256 _amount) {
+    require(_amount > 0, "Amount must be greater than 0.");
+    _;
+  } 
 
   modifier sufficientBalance(address _sender, uint256 _amount) {
     require(balances[_sender] >= _amount.add(_burnRate), "Insufficient Funds.");
