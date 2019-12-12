@@ -1,4 +1,5 @@
 module.exports = {
+    // Token
     TOKEN_NAME: 'AXE Coin',
     TOKEN_SYMBOL: 'a2',
     TOTAL_SUPPLY: 100000000000,
@@ -12,4 +13,8 @@ module.exports = {
     APPROVAL_AMOUNT: 500,
     INVALID_APPROVAL_AMOUNT: 10000000000000,
     CHANGED_BURN_RATE: 500,
+    // Airdrop
+    TOKEN_ADDRESS: '0x04D37d12f89813c2683e526d2DC2c54c6dbbDDe7',
+    AIRDROP_AMOUNT: 100,
+    TOTAL_AIRDROPS: 0,
 }

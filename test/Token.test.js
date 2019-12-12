@@ -36,7 +36,7 @@ contract('Token', (accounts) => {
         assert.equal(symbol, TOKEN_SYMBOL);
     });
 
-    it(`should have total supply of ${TOTAL_SUPPLY}`, async () => {
+    it(`should have total supply of ${TOTAL_SUPPLY} on deployment`, async () => {
         const tokenContract = await TokenContract.deployed();
         const totalSupply = await tokenContract.totalSupply.call();
         assert.equal(totalSupply, TOTAL_SUPPLY);
