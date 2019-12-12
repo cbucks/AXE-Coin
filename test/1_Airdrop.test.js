@@ -51,14 +51,34 @@ contract('Airdrop', (accounts) => {
     it('retrieve remaining tokens in the airdrop contract', async () => {
         const airdrop = await AirdropContract.deployed();
         const remainingTokens = await airdrop.remainingTokens.call();
-        console.log('Remaining Tokens:', remainingTokens.toNumber());
         assert.equal(remainingTokens.toNumber(), AIRDROP_FUNDS);
     });
 
     it('owner can do airdrop to a new recipient', async () => {
         const airdrop = await AirdropContract.deployed();
-        const oldBalance = await airdrop.remainingTokens.call();
+        const token = await airdrop.token.call();
+        const tokenContract = await TokenContract.at(token);
+        const burnRate = await tokenContract.burnRate.call();
+        const amount = await airdrop.amount.call();
+        const oldRemainingTokens = await airdrop.remainingTokens.call();
+        const oldBalance = await tokenContract.balanceOf.call(accounts[4]);
+        await airdrop.airdrop(accounts[4]);
+        const remainingTokens = await airdrop.remainingTokens.call();
+        const balance = await tokenContract.balanceOf.call(accounts[4]);
+        assert.equal(remainingTokens.toNumber(), oldRemainingTokens.toNumber() - amount.toNumber() - burnRate.toNumber());
+        assert.equal(balance.toNumber(), amount.toNumber());
     });
+
+    it('throws when attempting to airdrop an address who already received airdrop before', async () => {
+        const airdrop = await AirdropContract.deployed();
+        try {
+            await airdrop.airdrop(accounts[4]);
+            assert.fail();
+        } catch (ContractError) {
+            return ensureException(ContractError, 'Address has already received an airdrop.');
+        }
+    });
+
 
 
 });
