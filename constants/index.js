@@ -5,4 +5,5 @@ module.exports = {
     DECIMALS: 2,
     BURN_RATE: 100,
     TOTAL_BURNED: 0,
+    TRANSFER_AMOUNT: 100,
 }

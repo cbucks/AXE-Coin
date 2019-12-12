@@ -3,12 +3,14 @@ const {
     TOKEN_NAME,
     TOKEN_SYMBOL,
     TOTAL_SUPPLY,
+    TOTAL_SUPPLY_MINUS_DECIMAL,
     DECIMALS,
     BURN_RATE,
     TOTAL_BURNED,
+    TRANSFER_AMOUNT,
 } = require('../constants');
 
-contract('TokenContract', () => {
+contract('TokenContract', (accounts) => {
     it('should deploy smart contract to ethereum network', async () => {
         const tokenContract = await TokenContract.deployed();
         assert(tokenContract.address !== '');
@@ -48,5 +50,18 @@ contract('TokenContract', () => {
         const tokenContract = await TokenContract.deployed();
         const totalBurn = await tokenContract.totalBurned.call();
         assert.equal(totalBurn, TOTAL_BURNED);
+    });
+
+    it('verifies balances after a transfer transaction', async () => {
+        const tokenContract = await TokenContract.deployed();
+        let balance = await tokenContract.balanceOf.call(accounts[0]);
+        const burnRate = await tokenContract.burnRate.call();
+        assert.equal(balance, TOTAL_SUPPLY);
+        await tokenContract.transfer(accounts[1], TRANSFER_AMOUNT);
+        balance = await tokenContract.balanceOf.call(accounts[0]);
+        const totalDifference = TOTAL_SUPPLY - TRANSFER_AMOUNT - burnRate.toNumber();
+        assert.equal(balance.toNumber(), totalDifference);
+        balance = await tokenContract.balanceOf.call(accounts[1]);
+        assert.equal(balance, TRANSFER_AMOUNT);
     });
 });
