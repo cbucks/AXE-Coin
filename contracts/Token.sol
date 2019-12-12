@@ -18,9 +18,9 @@ import { IERC20Token } from "./iERC20Token.sol";
 // Libraries
 import { SafeMath } from "./SafeMath.sol";
 import { Whitelist } from "./Whitelist.sol";
+import { Address } from "./Address.sol";
 // Inherited Contracts
 import { Pausable } from "./Pausable.sol";
-import { Address } from "./Address.sol";
 
 contract Token is IERC20Token, Whitelist, Pausable {
   using SafeMath for uint256;
