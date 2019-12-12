@@ -1,7 +1,7 @@
 module.exports = {
     // Token
-    TOKEN_NAME: 'AXE Coin',
-    TOKEN_SYMBOL: 'a2',
+    TOKEN_NAME: 'CRYPTOBUCKS',
+    TOKEN_SYMBOL: 'CBUCKS',
     TOTAL_SUPPLY: 100000000000,
     DECIMALS: 2,
     BURN_RATE: 100,

@@ -4,12 +4,12 @@ pragma solidity ^0.5.3;
 // 'CRYPTOBUCKS' Token Contract
 //
 // Deployed To : 0x4d9ee34b7ee0d3cef04e5909c27a266e7eb14712
-// Symbol      : X-Symbol
-// Name        : X-Token
-// Total Supply: 1,000,000,000 X-TOKEN
+// Symbol      : CBUCKS
+// Name        : CRYPTOBUCKS
+// Total Supply: 1,000,000,000 CBUCKS
 // Decimals    : 2
 //
-// (c) By 'ANONYMOUS' With 'A2' Symbol 2019.
+// (c) By 'ANONYMOUS' With 'CBUCKS' Symbol 2019.
 //
 // ----------------------------------------------------------------------------
 
@@ -34,8 +34,8 @@ contract Token is IERC20Token, Whitelist, Pausable {
   uint256 _totalBurned;
 
   constructor () public {
-    _name = "AXE Coin";
-    _symbol = "a2";
+    _name = "CRYPTOBUCKS";
+    _symbol = "CBUCKS";
     _totalSupply = 100000000000;
     _decimals = 2;
     _burnRate = 100;
@@ -46,7 +46,6 @@ contract Token is IERC20Token, Whitelist, Pausable {
 
   mapping(address => uint256) private balances;
   mapping(address => mapping(address => uint256)) private allowed;
-  
   event Burned(address indexed from, uint256 value, uint256 timestamp);
   event BurnRateChanged(address indexed from, uint256 value, uint256 timestamp);
 
