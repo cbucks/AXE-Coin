@@ -2,7 +2,7 @@
 
 # CRYPTOBUCKS
 
-Cryptobucks is a token that enables token holders to liquidate their tokens easily. Users do not pay gas to the miners but instead tokens are burned to establish a self sustaining economy as per the rule of supply and demand.
+Cryptobucks is a peer to peer platform that gives you an easy and quick way to buy and sell bitcoin and copytrade using blockchain. Our wallet platform uses cold storage Nano X Ledgers to guarantee the safety of the bitcoins  . We offer an easy user experience for securely making peer to peer transactions by making copytrading software on blockchain. By doing so, this will definitely increase efficiency, transparency, and maximize profitability.
 
 ## Contracts
 1. Token.sol - CBucks ERC20 compliant token
