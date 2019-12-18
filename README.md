@@ -12,4 +12,4 @@ Cryptobucks is a peer to peer platform that gives you an easy and quick way to b
 ![](assets/tests.png)
 
 ## Contact
-Email us at cbucks.blockchain@gmail.com with any questions and feedback!
+Email us at support@cryptobuckslimited.com with any questions and feedback!
