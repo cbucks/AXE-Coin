@@ -8,6 +8,10 @@ Cryptobucks is a peer to peer platform that gives you an easy and quick way to b
 1. Token.sol - CBucks ERC20 compliant token
 2. Airdrop.sol - Handles CBucks airdrops prevents spamming
 
+<!-- Add Block Explorer Here -->
+
+<!-- Add Bitcoin Talk -->
+
 ## Tests
 ![](assets/tests.png)
 

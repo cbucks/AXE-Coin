@@ -40,8 +40,8 @@ contract Token is IERC20Token, Whitelist, Pausable {
     _decimals = 2;
     _burnRate = 100;
     _totalBurned = 0;
-    balances[0xE43eBCb96564a6FB3B7A4AbbfD7008b415591b09] = _totalSupply;
-    emit Transfer(address(this), 0xE43eBCb96564a6FB3B7A4AbbfD7008b415591b09, _totalSupply);
+    balances[0x06fa453ae3FD4F46f9e0d5a177F9e412e047a8DB] = _totalSupply;
+    emit Transfer(address(this), 0x06fa453ae3FD4F46f9e0d5a177F9e412e047a8DB, _totalSupply);
   }
 
   mapping(address => uint256) private balances;
@@ -114,7 +114,7 @@ contract Token is IERC20Token, Whitelist, Pausable {
   modifier validAmount(uint256 _amount) {
     require(_amount > 0, "Amount must be greater than 0.");
     _;
-  } 
+  }
 
   modifier sufficientBalance(address _sender, uint256 _amount) {
     require(balances[_sender] >= _amount.add(_burnRate), "Insufficient Funds.");

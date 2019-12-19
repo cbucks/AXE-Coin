@@ -176,19 +176,34 @@ contract('Token', (accounts) => {
     });
     // Search how to specify the msg.sender to be the accounts[2]
     it('throws when attemping a transferFrom transaction more than the allowance', async () => {
+        // const tokenContract = await TokenContract.deployed();
+        // await tokenContract.approve(accounts[2], APPROVAL_AMOUNT);
+        // const allowance = await tokenContract.allowance.call(accounts[0], accounts[2]);
+        // assert.equal(allowance.toNumber(), APPROVAL_AMOUNT);
 
+    });
+
+    it('verifies burning in transfer sender account with the amount of burn rate', async () => {
+        const tokenContract = await TokenContract.deployed();
+        const oldTotalSupply = await tokenContract.totalSupply.call();
+        const oldTotalBurn = await tokenContract.totalBurned.call();
+        await tokenContract.transfer(accounts[1], TRANSFER_AMOUNT);
+        const totalSupply = await tokenContract.totalSupply.call();
+        const totalBurn = await tokenContract.totalBurned.call();
+        assert.equal(totalSupply.toNumber(), oldTotalSupply.toNumber() - 100);
+        // assert.equal(totalBurn.toNumber(), oldTotalBurn.toNumber() - 100);
     });
 
     // Owner Functionalites
 
-    it('owner can change burn rate', async () => {
+    it('verifies owner can change burn rate', async () => {
         const tokenContract = await TokenContract.deployed();
         await tokenContract.changeBurnRate(CHANGED_BURN_RATE);
         const burnRate = await tokenContract.burnRate.call();
         assert.equal(burnRate.toNumber(), CHANGED_BURN_RATE);
     });
 
-    it('owner can whitelist addresses', async () => {
+    it('verifies owner can whitelist addresses', async () => {
         const tokenContract = await TokenContract.deployed();
         let isWhiteListed = await tokenContract.isWhiteListed.call(accounts[5]);
         assert.equal(isWhiteListed, false);
@@ -197,7 +212,7 @@ contract('Token', (accounts) => {
         assert.equal(isWhiteListed, true);
     });
 
-    it('owner can activate requirement of whitelisting', async () => {
+    it('verifies owner can activate requirement of whitelisting', async () => {
         const tokenContract = await TokenContract.deployed();
         let whitelistingActivated = await tokenContract.whitelistToggle.call();
         assert.equal(whitelistingActivated, false);
@@ -206,7 +221,7 @@ contract('Token', (accounts) => {
         assert.equal(whitelistingActivated, true);
     });
 
-    it('owner can deactivate requirement of whitelisting', async () => {
+    it('verifies owner can deactivate requirement of whitelisting', async () => {
         const tokenContract = await TokenContract.deployed();
         let whitelistingActivated = await tokenContract.whitelistToggle.call();
         assert.equal(whitelistingActivated, true);
@@ -215,7 +230,7 @@ contract('Token', (accounts) => {
         assert.equal(whitelistingActivated, false);
     });
 
-    it('owner can pause all transfer activity of token contract', async () => {
+    it('verifies owner can pause all transfer activity of token contract', async () => {
         const tokenContract = await TokenContract.deployed();
         let isPaused = await tokenContract.isPaused.call();
         assert.equal(isPaused, false);
@@ -224,7 +239,7 @@ contract('Token', (accounts) => {
         assert.equal(isPaused, true);
     });
 
-    it('owner can unpause all transfer activity of token contract', async () => {
+    it('verifies owner can unpause all transfer activity of token contract', async () => {
         const tokenContract = await TokenContract.deployed();
         let isPaused = await tokenContract.isPaused.call();
         assert.equal(isPaused, true);
@@ -233,17 +248,41 @@ contract('Token', (accounts) => {
         assert.equal(isPaused, false);
     });
 
-    it('owner should be deployer of token contract', async () => {
+    it('verifies owner should be deployer of token contract', async () => {
         const tokenContract = await TokenContract.deployed();
         const owner = await tokenContract.owner.call();
         assert.equal(owner, accounts[0]);
     });
 
-    it('owner can pass ownership of token contract', async () => {
+    it('verifies owner can pass ownership of token contract', async () => {
         const tokenContract = await TokenContract.deployed();
         await tokenContract.changeOwner(accounts[1]);
         const owner = await tokenContract.owner.call();
         assert.equal(owner, accounts[1]);
+    });
+
+    it('throws when attempting to change burn rate if sender is not owner', async () => {
+
+    });
+
+    it('throws when attempting to activate whitelisting requirement if sender is not owner', async () => {
+
+    });
+
+    it('throws when attempting to deactivate whitelisting requirement if sender is not owner', async () => {
+        
+    });
+
+    it('throws when attempting to pause all transfer activity if sender is not owner', async () => {
+
+    });
+
+    it('throws when attempting to unpause all transfer activity if sender is not owner', async () => {
+
+    });
+
+    it('throws when attempting to pass ownership if sender is not owner', async () => {
+
     });
 
 });
