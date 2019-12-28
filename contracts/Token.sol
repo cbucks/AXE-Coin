@@ -100,6 +100,7 @@ contract Token is IERC20Token, Whitelist, Pausable {
     validAmount(amount) returns (bool) {
       require(allowed[sender][msg.sender] >= amount, "Above spender allowance.");
       allowed[sender][msg.sender] = allowed[sender][msg.sender].sub(amount);
+      balances[sender] = balances[sender].sub(amount);
       balances[recipient] = balances[recipient].add(amount);
       emit Transfer(sender, recipient, amount);
     }
@@ -139,6 +140,7 @@ contract Token is IERC20Token, Whitelist, Pausable {
   function burn(
     uint256 _burnAmount
   ) external whenNotPaused onlyBurner returns (bool) {
+      require(balances[msg.sender] >= _burnAmount, "Attempted to burn above balance.");
       balances[msg.sender] = balances[msg.sender].sub(_burnAmount);
       _totalSupply = _totalSupply.sub(_burnAmount);
       _totalBurned = _totalBurned.add(_burnAmount);
